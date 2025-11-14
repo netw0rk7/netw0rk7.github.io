@@ -1,65 +1,23 @@
 <script>
-  import { onMount } from "svelte";
-
   import I18nKey from "../i18n/i18nKey";
   import { i18n } from "../i18n/translation";
   import { getPostUrlBySlug } from "../utils/url-utils";
 
-  // props จากด้านนอก
+  // props ที่ page ด้านนอกส่งมา
   export let tags = [];
   export let categories = [];
   export let sortedPosts = [];
 
-  // กลุ่มโพสต์ตามปี
+  // ตอนนี้เรายังไม่ filter ตาม query เลย
+  // ใช้ sortedPosts ตรง ๆ ไปก่อน
   let groups = [];
 
-  function formatDate(date) {
-    const d = new Date(date);
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${month}-${day}`;
-  }
-
-  function formatTag(tagList = []) {
-    return tagList.map((t) => `#${t}`).join(" ");
-  }
-
-  onMount(() => {
-    // อ่านค่าจาก query string (เฉพาะฝั่ง browser)
-    const params = new URLSearchParams(window.location.search);
-
-    tags = params.has("tag") ? params.getAll("tag") : [];
-    categories = params.has("category") ? params.getAll("category") : [];
-    const uncategorized = params.get("uncategorized");
-
-    let filteredPosts = sortedPosts;
-
-    if (tags.length > 0) {
-      filteredPosts = filteredPosts.filter(
-        (post) =>
-          Array.isArray(post.data.tags) &&
-          post.data.tags.some((tag) => tags.includes(tag)),
-      );
-    }
-
-    if (categories.length > 0) {
-      filteredPosts = filteredPosts.filter(
-        (post) =>
-          post.data.category && categories.includes(post.data.category),
-      );
-    }
-
-    if (uncategorized) {
-      filteredPosts = filteredPosts.filter((post) => !post.data.category);
-    }
-
-    // group ตามปี
-    const grouped = filteredPosts.reduce((acc, post) => {
+  // group ตามปีจาก published
+  function buildGroups(posts) {
+    const grouped = posts.reduce((acc, post) => {
       const d = new Date(post.data.published);
       const year = d.getFullYear();
-      if (!acc[year]) {
-        acc[year] = [];
-      }
+      if (!acc[year]) acc[year] = [];
       acc[year].push(post);
       return acc;
     }, {});
@@ -69,11 +27,25 @@
       posts: grouped[parseInt(yearStr, 10)],
     }));
 
-    // sort ปีใหม่อยู่บน
+    // ปีใหม่อยู่บน
     groupedPostsArray.sort((a, b) => b.year - a.year);
+    return groupedPostsArray;
+  }
 
-    groups = groupedPostsArray;
-  });
+  // ให้ Svelte คำนวณ groups จาก sortedPosts
+  $: groups = buildGroups(sortedPosts || []);
+
+  function formatDate(published) {
+    const d = new Date(published);
+    if (Number.isNaN(d.getTime())) return "";
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${month}-${day}`;
+  }
+
+  function formatTag(tagList = []) {
+    return tagList.map((t) => `#${t}`).join(" ");
+  }
 </script>
 
 <div class="card-base px-8 py-6">
