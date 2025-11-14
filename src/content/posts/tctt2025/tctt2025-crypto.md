@@ -8,6 +8,9 @@ draft: false
 ---
 
 ## โจทย์
+
+Github : https://github.com/netw0rk7/Thailand-Cyber-Top-Talent-2025-Writeup/tree/5a10695633d2687657e086a3889460c31dae7904/Crypto/Open-AdvancedFactorWar
+
 **Story**
 
 คุณได้คีย์สาธารณะประหลาดที่ดูเหมือน RSA แต่ Modulus ถูกสร้างจาก **หลาย prime (multi‑prime)** 
