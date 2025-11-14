@@ -2,6 +2,7 @@
 title: Thailand Cyber Top Talent 2025 [OPEN] — AdvancedFactorWar
 published: 2025-11-14
 description: "AdvancedFactorWar Cryptography Writeups from TCTT2025"
+image: "./tctt2025.png"
 tags: ["CTF"]
 category: CTF
 draft: false
