@@ -58,16 +58,11 @@ export const profileConfig: ProfileConfig = {
 	bio: "I'm Phiengsoon Napasaranont aka 'Netw0rk-7' a Penetration Tester and Red Team Operator specializing in adversary emulation, offensive security, and full-spectrum intrusion operations. My work focuses on exploiting real-world attack paths, bypassing modern defensive controls, and validating the resilience of enterprise environments through stealth, precision, and technical depth. Passionate about offensive research, exploit development, and building high-fidelity cyber-range labs for continuous skill improvement. Always learning. Always evolving.",
 	links: [
 		{
-			name: "Twitter",
-			icon: "fa6-brands:twitter", // Visit https://icones.js.org/ for icon codes
+			name: "Facebook",
+			icon: "fa6-brands:facebook-f", // Visit https://icones.js.org/ for icon codes
 			// You will need to install the corresponding icon set if it's not already included
 			// `pnpm add @iconify-json/<icon-set-name>`
-			url: "https://twitter.com",
-		},
-		{
-			name: "Steam",
-			icon: "fa6-brands:steam",
-			url: "https://store.steampowered.com",
+			url: "https://facebook.com/phieng.napas",
 		},
 		{
 			name: "GitHub",
