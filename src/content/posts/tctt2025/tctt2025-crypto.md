@@ -7,8 +7,6 @@ category: CTF
 draft: false
 ---
 
-# Open‑AdvancedFactorWar [300pts] - Cryptography Write-up
-
 ## โจทย์
 **Story**
 
