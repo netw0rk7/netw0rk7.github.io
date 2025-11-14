@@ -8,7 +8,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "RedOps Offensive Labs",
+	title: "Netw0rk-7 Offensive Labs",
 	subtitle: "Netw0rk-7 Hub",
 	lang: "en", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
 	themeColor: {
