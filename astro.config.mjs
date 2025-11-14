@@ -1,12 +1,20 @@
-import { defineConfig } from 'astro/config'
+import { defineConfig } from "astro/config";
+
+import tailwind from "@astrojs/tailwind";
+import sitemap from "@astrojs/sitemap";
+import svelte from "@astrojs/svelte";
+import swup from "@swup/astro";
+import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 
 export default defineConfig({
-  site: 'https://netw0rk7.github.io',
+  site: "https://netw0rk7.github.io",
+  base: "/",
   integrations: [
     tailwind({
       nesting: true,
     }),
+
     swup({
       theme: false,
       animationClass: "transition-swup-",
@@ -20,18 +28,17 @@ export default defineConfig({
       globalInstance: true,
     }),
 
-    // 👇 เพิ่ม block นี้เข้าไป
     icon({
       include: {
         "fa6-brands": ["*"],
         "fa6-regular": ["*"],
         "fa6-solid": ["*"],
+        "material-symbols": ["*"],
       },
     }),
 
     svelte(),
     sitemap(),
-    // ถ้ามี astro-expressive-code หรือ plugin อื่นให้ปล่อยไว้เหมือนเดิม
-    // expressiveCode({...}),
+    expressiveCode(),
   ],
-})
+});
