@@ -9,6 +9,8 @@ category: Home Labs
 draft: true
 ---
 
+Github : https://github.com/netw0rk7/OT-Security-Simulation-Labs
+
 # ENGLISH BELOW
 
 # OT Security Simulator
@@ -75,9 +77,10 @@ draft: true
 **การติดตั้งและรันระบบ**
 
 ```bash
-git clone https://github.com/netw0rk7/OT-Security-Simulation-Labs
-cd OT-Security-Simulation-Labs
+1. Download on "Release"
+2. Extract File
 
+3. Start Docker Engine
 # แก้ .env ถ้าต้องการเปลี่ยน Credential เข้าสู่ระบบ / InfluxDB token
 docker compose up -d
 
@@ -457,13 +460,14 @@ curl -s -X POST http://127.0.0.1:5000/api/power/on | jq .
 **Install & Run**
 
 ```bash
-git clone https://github.com/netw0rk7/OT-Security-Simulation-Labs
-cd OT-Security-Simulation-Labs
+1. Download on "Release"
+2. Extract File
 
-# Edit .env if you want to change Grafana/InfluxDB credentials or tokens
+3. Start Docker Engine
+# แก้ .env ถ้าต้องการเปลี่ยน Credential เข้าสู่ระบบ / InfluxDB token
 docker compose up -d
 
-# Check container status
+# ตรวจสอบสถานะ container
 docker compose ps
 ```
 
