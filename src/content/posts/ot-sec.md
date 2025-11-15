@@ -6,7 +6,7 @@ tags:
   - Home Labs
   - OT Security
 category: Home Labs
-draft: true
+draft: false
 ---
 
 Github : https://github.com/netw0rk7/OT-Security-Simulation-Labs
