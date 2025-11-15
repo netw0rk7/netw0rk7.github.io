@@ -1,12 +1,14 @@
 ---
-title: การเซ็ต AD Home Lab สำหรับ Red Teaming
+title: How to set Active Directory Home Labs for Red Teaming [TH/EN]
 published: 2025-11-15
-description: " การเซ็ต Active Directory Lab สำหรับฝึก Red Teaming"
+description: "How to set Active Directory Lab for Red Teaming"
 tags: ["Home Labs","Red Teaming"]
-category: Home Lans
+category: Home Labs
 draft: false
 ---
-# Sentinel-7 Active Directory Lab Setup
+# ENGLISH BELOW
+
+# Active Directory Lab Setup
 
 ## 0) Network Topology (VMware)
 
@@ -603,3 +605,168 @@ Test-NetConnection 10.10.20.58 -Port 1433
 - SQL บน **DB01** ตรวจ Ticket และอนุญาตตามสิทธิ์ที่กำหนดไว้
 
 ---
+
+# ENGLISH GUIDE
+
+# Active Directory Lab Setup (English Translation)
+
+## 0) Network Topology (VMware)
+
+**Objective**
+- Internal network: 10.10.20.0/24 (NAT/Host-Only)
+- From the “outside”, only Web (HTTP/HTTPS) on **WEB01** is exposed
+- Access to **DC01/DB01/DB02/Client01** must go through **SSH/Proxy Tunnel** via **WEB01** only
+
+**Internal IP Assignments**
+- DC01 = **10.10.20.2/24**, Gateway = 10.10.20.1, DNS = 10.10.20.2 (self)
+- DB01 = **10.10.20.54/24**, DNS = 10.10.20.2
+- DB02 = **10.10.20.58/24**, DNS = 10.10.20.2
+- WEB01 = **10.10.20.7/24**, DNS = 10.10.20.2
+- Client01 = **10.10.20.100/24**, DNS = 10.10.20.2
+
+**VMware Network Setup**
+- Create a Virtual Network Adapter named **Sentinel7 (Int.) (Host-only)** using subnet `10.10.20.0/24`
+- Connect **DC01/DB01/DB02/Client01** using this internal NIC only
+- **WEB01** uses two NICs:
+  - NIC1: **Sentinel7 (Host-only)** for internal access
+  - NIC2: **Bridged** for public internet exposure
+
+> **Lab requirement:** From outside, open only **Port 80/443** (web) and **Port 22** (SSH tunnel) on WEB01.  
+> All internal systems must be unreachable directly from outside.
+
+---
+
+## 1) Deploy VMs
+
+Create VMs: **DC01, DB01, DB02, WEB01** using Windows Server 2019 and **Client01** using Windows 10.
+
+**Set IP via PowerShell:**
+```powershell
+New-NetIPAddress -InterfaceAlias "<IF>" -IPAddress 10.10.20.2 -PrefixLength 24 -DefaultGateway 10.10.20.1  
+Set-DnsClientServerAddress -InterfaceAlias "<IF>" -ServerAddresses 10.10.20.2
+```
+
+---
+
+## 2) Configure DC01 (AD DS + DNS + ADFS) and Promote Domain
+
+```powershell
+Rename-Computer -NewName "SENTINEL7-DC" -Restart
+Install-WindowsFeature AD-Domain-Services, DNS, ADFS-Federation -IncludeManagementTools
+```
+
+```powershell
+Install-ADDSForest `
+  -DomainName "sentinel7.local" `
+  -DomainNetbiosName "SENTINEL7" `
+  -SafeModeAdministratorPassword (Read-Host -AsSecureString "DSRM Password") `
+  -InstallDns `
+  -Force
+```
+
+---
+
+## 3) DNS + Users/Groups + Join Domain
+
+### 3.1 DNS A Records
+```powershell
+Add-DnsServerResourceRecordA -ZoneName "sentinel7.local" -Name "intranet" -IPv4Address 10.10.20.7  
+Add-DnsServerResourceRecordA -ZoneName "sentinel7.local" -Name "dev.env.intranet" -IPv4Address 10.10.20.7  
+```
+
+### 3.2 Create OUs, Groups, Users (with sample flags/hints)
+
+(Full script included in original Thai version.)
+
+### 3.3 Join Domain
+```powershell
+Add-Computer -DomainName "sentinel7.local" -Credential "SENTINEL7\Administrator" -Restart
+```
+
+---
+
+## 4) gMSA Setup (DC01 → DB01/DB02)
+
+Includes:
+- KDS Root Key
+- Create gMSA accounts
+- Install gMSA on DB01 and DB02
+
+---
+
+## 5) Install SQL Server 2019 Express
+
+- Enable TCP/1433
+- Assign SQL services to gMSA
+- Setup firewall rules
+- Enable SQL+Windows mixed authentication mode
+
+---
+
+## 6) Databases + Permissions + Linked Servers
+
+- DB01 → public_db (with flags and Base64 hints)
+- DB02 → secret_db (with flags)
+- Linked Server from DB02 → DB01 using SQL login
+- Reverse link DB01 → DB02
+
+---
+
+## 7) WEB01 (IIS + .NET Hosting + Vulnerable Intranet)
+
+- Install IIS + ASP.NET Features
+- Configure sites for Intranet/Dev
+- Add vulnerable SQLi endpoint `/api/announce?id=1`
+- Add leaked credentials in `appsettings.json`
+- Run AppPool as LocalSystem (intentional LPE vuln)
+
+---
+
+## 8) Tunneling Enforcement (OpenSSH on WEB01)
+
+Tunnel examples:
+```bash
+ssh -N -L 13389:10.10.20.100:3389 -L 11433:10.10.20.58:1433 Administrator@<WEB_PUBLIC_IP>
+```
+
+SOCKS Proxy:
+```bash
+ssh -N -D 1080 Administrator@<WEB_PUBLIC_IP>
+```
+
+---
+
+## 9) Quick Validation Checklist
+
+Includes:
+- DNS tests
+- Web access tests
+- SQL linked tests
+- gMSA status
+- Firewall isolation
+- Attacker POV validation
+
+---
+
+## 10) Security Patch Recommendations
+
+Discusses:
+- Restricting gMSA
+- Using Integrated Security
+- Removing SQL login mapping
+- Fixing SQLi
+- Restricting Dev site
+- Disabling Linked Servers
+
+---
+
+## 11) How gMSA Works on WEB01
+
+Explains:
+- WEB01$ requests a TGT
+- Retrieves gMSA managed password from KDS
+- Performs Kerberos authentication to DB01/DB02
+- No plaintext password required in config files
+
+---
+
