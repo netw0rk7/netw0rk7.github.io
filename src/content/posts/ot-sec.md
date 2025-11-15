@@ -6,7 +6,7 @@ tags:
   - Home Labs
   - OT Security
 category: Home Labs
-draft: false
+draft: true
 ---
 
 # ENGLISH BELOW
