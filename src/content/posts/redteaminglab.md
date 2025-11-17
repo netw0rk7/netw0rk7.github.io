@@ -2,6 +2,7 @@
 title: How to set Active Directory Home Labs for Red Teaming [TH/EN]
 published: 2025-11-15
 description: "How to set Active Directory Lab for Red Teaming"
+image: "https://github.com/user-attachments/assets/524cab17-db11-416e-ae61-8ac26c3d9e12"
 tags: ["Home Labs","Red Teaming"]
 category: Home Labs
 draft: false
