@@ -1,5 +1,5 @@
 # About me
-&nbsp;&nbsp;&nbsp;&nbsp;I'm Phiengsoon Napasaranont 'Din' callsign 'Netw0rk-7' a Penetration Tester and Red Team Operator specializing in adversary emulation, offensive security, and full-spectrum intrusion operations. My work focuses on exploiting real-world attack paths, bypassing modern defensive controls, and validating the resilience of enterprise environments through stealth, precision, and technical depth. Passionate about offensive research, exploit development, and building high-fidelity cyber-range labs for continuous skill improvement. Always learning. Always evolving.",<br><br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;I'm Phiengsoon Napasaranont 'Din' callsign 'Netw0rk-7' I'm Penetration Tester and Red Team Operator specializing in adversary emulation, offensive security, and full-spectrum intrusion operations. My work focuses on exploiting real-world attack paths, bypassing modern defensive controls, and validating the resilience of enterprise environments through stealth, precision, and technical depth. Passionate about offensive research, exploit development, and building high-fidelity cyber-range labs for continuous skill improvement. Always learning. Always evolving.",<br><br><br>
 
 # Professional Summary
 
