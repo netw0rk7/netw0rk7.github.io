@@ -2,6 +2,7 @@
 title: Thailand Cyber Top Talent 2025 [OPEN] — Networking
 published: 2025-11-16
 description: Network Writeups from TCTT2025
+image: "https://github.com/user-attachments/assets/b5356944-ca38-4fa0-8714-8a9ffa249aab"
 tags:
   - CTF
   - Networking
