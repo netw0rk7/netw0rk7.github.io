@@ -18,8 +18,6 @@ Github : https://github.com/netw0rk7/OT-Security-Simulation-Labs
 
 **Sentinel 7 OT Security Simulator** - ห้องทดลองจำลองระบบอุตสาหกรรม (OT) สำหรับฝึก CTF / PenTest โดยไม่ต้องใช้ Hardware จริง รองรับโปรโตคอลสำคัญของ OT เช่น **Modbus, MQTT, OPC-UA, BACnet, RTSP/CCTV** พร้อมระบบ Dashboard สำหรับสังเกตการทำงานของระบบจำลอง โดยใช้ Telegraf - InfluxDB - Grafana
 
-![Logo](https://github.com/user-attachments/assets/21320071-b9b1-482e-bba8-851891681059)
-
 ---
 
 ## สารบัญ
@@ -400,8 +398,6 @@ curl -s -X POST http://127.0.0.1:5000/api/power/on | jq .
 # OT Security Simulator
 
 **Sentinel 7 OT Security Simulator** – A fully simulated industrial OT environment for CTF / PenTest training without requiring real hardware. Supports **Modbus, MQTT, OPC-UA, BACnet, RTSP/CCTV**, with monitoring dashboards powered by Telegraf – InfluxDB – Grafana.
-
-![Logo](https://github.com/user-attachments/assets/21320071-b9b1-482e-bba8-851891681059)
 
 ---
 
