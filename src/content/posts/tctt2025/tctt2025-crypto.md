@@ -2,6 +2,7 @@
 title: Thailand Cyber Top Talent 2025 [OPEN] — Cryptography
 published: 2025-11-14
 description: "Cryptography Writeups from TCTT2025"
+image: "https://github.com/user-attachments/assets/b5356944-ca38-4fa0-8714-8a9ffa249aab"
 tags: ["CTF","Cryptography"]
 category: CTF
 draft: false
