@@ -2,7 +2,7 @@
 title: Sentinel 7 OT Security Simulator
 published: 2025-11-16
 description: OT Security Simulation for PenTest/Red Teaming
-image: "https://github.com/user-attachments/assets/33bc41f4-963b-4a40-b37e-298cf3104094"
+image: "https://github.com/user-attachments/assets/a505662c-0fc4-4d42-8587-0a088737ac3a"
 tags:
   - Home Labs
   - OT Security
